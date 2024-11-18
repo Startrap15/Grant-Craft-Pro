@@ -5,6 +5,46 @@ let square: any = null;
 export async function initSquare() {
   const appId = import.meta.env.VITE_SQUARE_APP_ID;
   const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
+  const environment = import.meta.env.VITE_SQUARE_ENVIRONMENT || 
+'sandbox';
+
+  if (!appId || !locationId) {
+    throw new Error('Square credentials not configured. Please check 
+your environment variables.');
+  }
+
+  if (!square) {
+    try {
+      square = await payments({
+        applicationId: appId,
+        locationId: locationId,
+        environment: environment as 'sandbox' | 'production'
+      });
+    } catch (error) {
+      console.error('Error initializing Square:', error);
+      throw error;
+    }
+  }
+
+  return square;
+}
+
+export function getSquareInstance() {
+  if (!square) {
+    throw new Error('Square not initialized. Call initSquare() 
+first.');
+  }
+  return square;
+}import { 
+payments } 
+from 
+'@square/web-sdk';
+
+let square: any = null;
+
+export async function initSquare() {
+  const appId = import.meta.env.VITE_SQUARE_APP_ID;
+  const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
   const environment = import.meta.env.VITE_SQUARE_ENVIRONMENT || 'sandbox';
 
   if (!appId || !locationId) {
