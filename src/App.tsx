@@ -1,4 +1,68 @@
 import React, { useState } from 'react';
+import { QueryClient, QueryClientProvider } from 
+'@tanstack/react-query';
+import Navigation from './components/Navigation';
+import TopBar from './components/TopBar';
+import Home from './pages/Home';
+import Resources from './pages/Resources';
+import Blog from './pages/Blog';
+import Pricing from './pages/Pricing';
+import Checkout from './pages/Checkout';
+import Portal from './pages/Portal';
+import ConsultationModal from './components/ConsultationModal';
+import Chatbot from './components/Chatbot';
+
+const queryClient = new QueryClient();
+
+export default function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const handleConsultationClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <Home onConsultationClick={handleConsultationClick} 
+/>;
+      case 'resources':
+        return <Resources />;
+      case 'blog':
+        return <Blog />;
+      case 'pricing':
+        return <Pricing />;
+      case 'checkout':
+        return <Checkout />;
+      case 'portal':
+        return <Portal />;
+      default:
+        return <Home onConsultationClick={handleConsultationClick} 
+/>;
+    }
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-white">
+        <TopBar />
+        <Navigation 
+          onConsultationClick={handleConsultationClick}
+          onNavigate={setCurrentPage}
+          currentPage={currentPage}
+        />
+        {renderPage()}
+        <ConsultationModal isOpen={isModalOpen} onClose={() => 
+setIsModalOpen(false)} />
+        <Chatbot />
+      </div>
+    </QueryClientProvider>
+  );
+}import 
+React, { useState 
+} from 
+'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Navigation from './components/Navigation';
