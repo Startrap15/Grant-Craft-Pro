@@ -4,15 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  PYTHON_VERSION = "3.8"
 
 [functions]
   external_node_modules = ["square"]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-
-[context.production]
-  command = "python --version"
 
 [[redirects]]
   from = "/*"
