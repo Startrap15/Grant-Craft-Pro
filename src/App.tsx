@@ -17,27 +17,31 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [showConsultation, setShowConsultation] = useState(false)
 
+  const handleConsultationClick = () => {
+    setShowConsultation(true)
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
         <TopBar />
         <Navigation 
-          onConsultationClick={() => setShowConsultation(true)} 
+          onConsultationClick={handleConsultationClick}
           currentPage={currentPage}
           onNavigate={setCurrentPage}
         />
         
-        {/* Content rendering based on currentPage */}
-        {currentPage === 'home' && <Home />}
+        {currentPage === 'home' && <Home onConsultationClick={handleConsultationClick} />}
         {currentPage === 'resources' && <Resources />}
         {currentPage === 'blog' && <Blog />}
         {currentPage === 'pricing' && <Pricing />}
         {currentPage === 'checkout' && <Checkout />}
         {currentPage === 'portal' && <Portal />}
 
-        {showConsultation && (
-          <ConsultationModal onClose={() => setShowConsultation(false)} />
-        )}
+        <ConsultationModal 
+          isOpen={showConsultation}
+          onClose={() => setShowConsultation(false)} 
+        />
         
         <Chatbot />
       </div>
