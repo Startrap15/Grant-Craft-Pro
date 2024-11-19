@@ -1,34 +1,17 @@
-import Stripe from 'stripe';
+import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-10-28.acacia'  // Updated API version
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-10-28.acacia'
+})
 
 const PRICE_IDS = {
-  basic: {
-    monthly: 'price_H5jTxfSF316EM3',
-    annual: 'price_H5jTxfSF316EM4'
-  },
-  professional: {
-    monthly: 'price_H5jTxfSF316EM5',
-    annual: 'price_H5jTxfSF316EM6'
-  },
-  enterprise: {
-    monthly: 'price_H5jTxfSF316EM7',
-    annual: 'price_H5jTxfSF316EM8'
-  }
-};
+  BASIC: 'price_basic',
+  PRO: 'price_pro',
+  ENTERPRISE: 'price_enterprise'
+}
 
-export async function createCheckoutSession(plan: string, billing: 
-string) {
+export async function createCheckoutSession(priceId: string) {
   try {
-    const priceId = PRICE_IDS[plan as keyof typeof 
-PRICE_IDS]?.[billing as 'monthly' | 'annual'];
-    
-    if (!priceId) {
-      throw new Error('Invalid plan or billing period');
-    }
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -38,69 +21,15 @@ PRICE_IDS]?.[billing as 'monthly' | 'annual'];
         },
       ],
       mode: 'subscription',
-      success_url: 
-`${process.env.DOMAIN}/portal?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.DOMAIN}/pricing`,
-      allow_promotion_codes: true,
-      billing_address_collection: 'required',
-      customer_email: undefined, // Will be collected by Stripe 
-Checkout
-    });
-
-    return session;
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    throw error;
-  }
-}import 
-Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16'
-});
-
-const PRICE_IDS = {
-  basic: {
-    monthly: 'price_H5jTxfSF316EM3',
-    annual: 'price_H5jTxfSF316EM4'
-  },
-  professional: {
-    monthly: 'price_H5jTxfSF316EM5',
-    annual: 'price_H5jTxfSF316EM6'
-  },
-  enterprise: {
-    monthly: 'price_H5jTxfSF316EM7',
-    annual: 'price_H5jTxfSF316EM8'
-  }
-};
-
-export async function createCheckoutSession(plan: string, billing: string) {
-  try {
-    const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS]?.[billing as 'monthly' | 'annual'];
+      success_url: `${process.env.DOMAIN}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.DOMAIN}/canceled`,
+    })
     
-    if (!priceId) {
-      throw new Error('Invalid plan or billing period');
-    }
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.DOMAIN}/portal?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.DOMAIN}/pricing`,
-      allow_promotion_codes: true,
-      billing_address_collection: 'required',
-      customer_email: undefined, // Will be collected by Stripe Checkout
-    });
-
-    return session;
+    return session
   } catch (error) {
-    console.error('Error creating checkout session:', error);
-    throw error;
+    console.error('Error creating checkout session:', error)
+    throw error
   }
 }
+
+export { PRICE_IDS }
